@@ -1,0 +1,32 @@
+name: PostgreSQL Service Test
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  test-postgres:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:11
+        env:
+          POSTGRES_USER: testuser
+          POSTGRES_PASSWORD: testpass
+          POSTGRES_DB: testdb
+        ports:
+          - 5432:5432
+
+    steps:
+      - name: Wait for PostgreSQL
+        run: |
+          echo "Waiting for PostgreSQL to be ready..."
+          while ! nc -z localhost 5432; do
+            sleep 1
+          done
+          echo "PostgreSQL is ready!"
+
+      - name: Confirm Service
+        run: echo "PostgreSQL service is running successfully"
+
